@@ -31,63 +31,65 @@ def json2geojson(infile, outfile):
 
     if outer_polygon is not None:
         for item in src:
-            outer_coords = [[coord["lat"], [coord["lng"]]] for coord in item[u'polygon'][u'outer']]
+            outer_coords = [[coord["lng"], coord["lat"]] for coord in item[u'polygon'][u'outer']]
             outer_pts.append(outer_coords)
 
     if inner_polygon is not 'null':
         for item in src:
-            inner_coords = [[coord["lat"], [coord["lng"]]] for coord in item[u'polygon'][u'inner']]
+            inner_coords = [[coord["lng"], coord["lat"]] for coord in item[u'polygon'][u'inner']]
             inner_pts.append(inner_coords)
 
     if test_polygon is not 'null':
         for item in src:
-            test_coords = [[coord["lat"], [coord["lng"]]] for coord in item[u'polygon'][u'test']]
+            test_coords = [[coord["lng"], coord["lat"]] for coord in item[u'polygon'][u'test']]
             test_pts.append(test_coords)
 
-
     # EXTRACT METADATA FROM THE INFILE
-    mapSite = src[0][u'meta'][u'mapSite']
-    clusterDistance = src[0][u'meta'][u'clusterDistance']
-    tableId = src[0][u'meta'][u'tableId']
+    map_site = src[0][u'meta'][u'mapSite']
+    cluster_distance = src[0][u'meta'][u'clusterDistance']
+    table_id = src[0][u'meta'][u'tableId']
     date = src[0][u'meta'][u'date']
     diameter = src[0][u'diameter']
     nearest = src[0][u'nearest']
 
     # SPECIFY THE OUTPUT DATA FORMAT
     dst = {"type": "FeatureCollection",
-                      "features": [{"type": "Feature",
-                                    "properties": {
-                                        "tableId":tableId,
-                                        "mapSite":mapSite,
-                                        "clusterDistance":clusterDistance,
-                                        "date":date,
-                                        "diameter":diameter,
-                                        "nearest":nearest},
-                                    "geometry": {"type": "Polygon",
-                                                 "coordinates":outer_pts}},
-                                   {"type": "Feature",
-                                    "properties": {
-                                        "tableId":tableId,
-                                        "mapSite":mapSite,
-                                        "clusterDistance":clusterDistance,
-                                        "date":date,
-                                        "diameter":diameter,
-                                        "nearest":nearest},
-                                    "geometry": {"type": "Polygon",
-                                                 "coordinates":inner_pts}},
-                                   {"type": "Feature",
-                                    "properties": {
-                                        "tableId":tableId,
-                                        "mapSite":mapSite,
-                                        "clusterDistance":clusterDistance,
-                                        "date":date,
-                                        "diameter":diameter,
-                                        "nearest":nearest},
-                                    "geometry": {"type": "Polygon",
-                                                 "coordinates":test_pts}},
-                                   ]
+           "features": [{"type": "Feature",
+                         "properties": {
+                             "tableId":table_id,
+                             "mapSite":map_site,
+                             "clusterDistance":cluster_distance,
+                             "date":date,
+                             "diameter":diameter,
+                             "nearest":nearest},
+                         "geometry": {"type": "Polygon",
+                                      "coordinates":outer_pts}},
+                        {"type": "Feature",
+                         "properties": {
+                             "tableId":table_id,
+                             "mapSite":map_site,
+                             "clusterDistance":cluster_distance,
+                             "date":date,
+                             "diameter":diameter,
+                             "nearest":nearest},
+                         "geometry": {"type": "Polygon",
+                                      "coordinates":inner_pts}},
+                        {"type": "Feature",
+                         "properties": {
+                             "tableId":table_id,
+                             "mapSite":map_site,
+                             "clusterDistance":cluster_distance,
+                             "date":date,
+                             "diameter":diameter,
+                             "nearest":nearest},
+                         "geometry": {"type": "Polygon",
+                                      "coordinates":test_pts}},
+                        ]
            }
     output = json.dumps(dst)
+
+    # outfile = infile
+    # print(outfile)
 
     outfile.write(output)
 
