@@ -40,16 +40,22 @@ def json2geojson(infile, outfile):
     if outer_polygon is not None:
         for item in src:
             outer_coords = [[coord["lng"], coord["lat"]] for coord in item[u'polygon'][u'outer']]
+            end_point = outer_coords[0]
+            outer_coords.append(end_point)
             outer_pts.append(outer_coords)
 
     if inner_polygon is not 'null':
         for item in src:
             inner_coords = [[coord["lng"], coord["lat"]] for coord in item[u'polygon'][u'inner']]
+            end_point = inner_coords[0]
+            inner_coords.append(end_point)
             inner_pts.append(inner_coords)
 
     if test_polygon is not 'null':
         for item in src:
             test_coords = [[coord["lng"], coord["lat"]] for coord in item[u'polygon'][u'test']]
+            end_point = test_coords[0]
+            test_coords.append(end_point)
             test_pts.append(test_coords)
 
     # EXTRACT METADATA FROM THE INFILE
@@ -109,7 +115,7 @@ def json2geojson(infile, outfile):
                         ]
            }
     output = json.dumps(dst)
-
+    # pprint.pprint(dst)
     outfile.write(output)
 
 if __name__ == '__main__':
