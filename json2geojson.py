@@ -1,6 +1,7 @@
 import click
 import json
 
+
 @click.command()
 @click.argument('infile', type=click.File(), required=True)
 @click.argument('outfile', type=click.File('w'), required=True)
@@ -18,6 +19,13 @@ def json2geojson(infile, outfile):
     """
     # SPECIFY INFILE
     src = json.load(infile)
+
+    # EXTRACT THE CLUSTER ID AND THE YEAR FROM THE FILE NAME
+    cluster_id = str(infile).split('_')[1]
+    year = str(infile).split('_')[2]
+
+    # EXTRACT THE DELINEATION TYPE (WET OR DRY)
+    pad_type = str(infile).split('_')[-1].split('.')[0]
 
     # SPECIFY POSSIBLE POLYGON GEOMETRIES
     polygon_geometries = src[0][u'polygon']
@@ -52,34 +60,48 @@ def json2geojson(infile, outfile):
     diameter = src[0][u'diameter']
     nearest = src[0][u'nearest']
 
+    # prime_ID = src[0][u'markers'][0][u'row']
+
     # SPECIFY THE OUTPUT DATA FORMAT
     dst = {"type": "FeatureCollection",
            "features": [{"type": "Feature",
                          "properties": {
+                             "polyId":"Outer",
                              "tableId":table_id,
                              "mapSite":map_site,
                              "clusterDistance":cluster_distance,
                              "date":date,
+                             "cluster_id":cluster_id,
+                             "delineation_type":pad_type,
+                             "classification_year":year,
                              "diameter":diameter,
                              "nearest":nearest},
                          "geometry": {"type": "Polygon",
                                       "coordinates":outer_pts}},
                         {"type": "Feature",
                          "properties": {
+                             "polyId":"Inner",
                              "tableId":table_id,
                              "mapSite":map_site,
                              "clusterDistance":cluster_distance,
                              "date":date,
+                             "cluster_id":cluster_id,
+                             "delineation_type":pad_type,
+                             "classification_year":year,
                              "diameter":diameter,
                              "nearest":nearest},
                          "geometry": {"type": "Polygon",
                                       "coordinates":inner_pts}},
                         {"type": "Feature",
                          "properties": {
+                             "polyId": "Test",
                              "tableId":table_id,
                              "mapSite":map_site,
                              "clusterDistance":cluster_distance,
                              "date":date,
+                             "cluster_id":cluster_id,
+                             "delineation_type":pad_type,
+                             "classification_year":year,
                              "diameter":diameter,
                              "nearest":nearest},
                          "geometry": {"type": "Polygon",
@@ -87,9 +109,6 @@ def json2geojson(infile, outfile):
                         ]
            }
     output = json.dumps(dst)
-
-    # outfile = infile
-    # print(outfile)
 
     outfile.write(output)
 
